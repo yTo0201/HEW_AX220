@@ -1,0 +1,181 @@
+//===================================================
+//		箱[box.cpp]
+//小楠裕子
+//=====================================================
+#include "box.h"
+#include "Texture.h"
+#include "Shader.h"
+#include "bsphere.h"
+
+//*********************************************************
+//マクロ定義
+//*********************************************************
+#define BOX_MODEL_PATH	"data/model/box001.x"
+
+#define BOX_COLLISION_SIZE_X	4.0f
+#define BOX_COLLISION_SIZE_Y	4.0f
+
+//*********************************************************
+//グローバル変数
+//*********************************************************
+
+//=============================
+//		ｺﾝｽﾄﾗｸﾀ
+//=============================
+Box::Box(){
+
+	ID3D11Device* pDevice = GetDevice();
+	ID3D11DeviceContext* pDeviceContext = GetDeviceContext();
+
+	// 位置・回転・スケールの初期設定
+	for (int i = 0; i < MAX_BOX; ++i) {
+		m_box[i].m_pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_box[i].m_state = true;
+		m_box[i].m_use = false;
+	}
+
+	// モデルデータの読み込み
+	if (!m_model.Load(pDevice, pDeviceContext, BOX_MODEL_PATH)) {
+		MessageBoxA(GetMainWnd(), "モデルデータ読み込みエラー", "InitModel", MB_OK);
+	}
+
+}
+
+//=============================
+//		ﾃﾞｽﾄﾗｸﾀ
+//=============================
+Box::~Box() {
+	// モデルの解放
+	m_model.Release();
+}
+//=============================
+//		更新
+//=============================
+void Box::Update() {
+	XMMATRIX mtxWorld,mtxTranslate;
+
+	for (int i = 0; i < MAX_BOX; ++i) 
+	{
+		//未使用ならスキップ
+		if (!m_box[i].m_use) {
+			continue;
+		}
+		// ワールドマトリックスの初期化
+		mtxWorld = XMMatrixIdentity();
+		// 移動を反映
+		mtxTranslate = XMMatrixTranslation(m_box[i].m_pos.x, m_box[i].m_pos.y, m_box[i].m_pos.z);
+		mtxWorld = XMMatrixMultiply(mtxWorld, mtxTranslate);
+
+		// ワールドマトリックス設定
+		XMStoreFloat4x4(&m_box[i].m_mtxWorld, mtxWorld);
+
+
+	}
+	
+}
+
+//=============================
+//		描画
+//=============================
+void Box::Draw() {
+	ID3D11DeviceContext* pDC = GetDeviceContext();
+
+	for (int i = 0; i < MAX_BOX; ++i)
+	{
+		//未使用ならスキップ
+		if (!m_box[i].m_use) {
+			continue;
+		}
+
+		// 不透明部分を描画
+		m_model.Draw(pDC, m_box[i].m_mtxWorld, eOpacityOnly);
+
+		// 半透明部分を描画
+		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
+		SetZWrite(false);				// Zバッファ更新しない
+		m_model.Draw(pDC, m_box[i].m_mtxWorld, eTransparentOnly);
+		SetZWrite(true);				// Zバッファ更新する
+		SetBlendState(BS_NONE);			// アルファブレンド無効
+	}
+}
+
+//=============================
+//		描画
+//=============================
+void Box::Draw(int num) {
+	ID3D11DeviceContext* pDC = GetDeviceContext();
+		//未使用なら描画しない
+		if (!m_box[num].m_use) {
+			return;
+		}
+		//破壊されていたら描画しない
+		if (!m_box[num].m_state) {
+			return;
+		}
+		// 不透明部分を描画
+		m_model.Draw(pDC, m_box[num].m_mtxWorld, eOpacityOnly);
+
+		// 半透明部分を描画
+		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
+		SetZWrite(false);				// Zバッファ更新しない
+		m_model.Draw(pDC, m_box[num].m_mtxWorld, eTransparentOnly);
+		SetZWrite(true);				// Zバッファ更新する
+		SetBlendState(BS_NONE);			// アルファブレンド無効
+}
+
+//=============================
+//	箱生成 引数 : モデル座標、サイズ、ワールドマトリックス
+//=============================
+int Box::Create(XMFLOAT3 pos) {
+	TBox* pBox = m_box;
+	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
+		if (pBox->m_use) continue;
+		pBox->m_pos = pos;
+		pBox->m_state = true;
+		pBox->m_use = true;
+
+		return i;
+	}
+	return -1;
+}
+
+//=============================
+//	箱解放	引数 :キューブ番号
+//=============================
+void Box::Release(int num) {
+	if (num < 0 || num >= MAX_BOX)
+		return;
+	m_box[num].m_use = false;
+}
+
+//=============================
+//	箱　破壊
+//=============================
+bool Box::Destroy(int num) {
+	if (num < 0 || num >= MAX_BOX)
+		return false;
+	m_box[num].m_state = false;
+	return true;
+}
+
+//=============================
+//	箱　座標取得
+//=============================
+XMFLOAT3 Box::GetPos(int num) {
+	return m_box[num].m_pos;
+}
+
+//=============================
+//	箱　サイズ取得
+//=============================
+XMFLOAT2 Box::GetSize() {
+	return XMFLOAT2(BOX_COLLISION_SIZE_X, BOX_COLLISION_SIZE_Y);
+}
+
+//=============================
+//	箱　状態取得
+//=============================
+bool Box::GetState(int num) {
+	return m_box[num].m_state;
+}
+
