@@ -69,7 +69,7 @@ void Player_Girl::Update() {
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	// ’j‚ÌŽq‚ÌÀ•W‚ðŽæ“¾
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
-	if (g_BoyPos.x < m_pos.x) {
+	if (g_BoyPos.x <= m_pos.x) {
 
 		// ¶ˆÚ“®
 		m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
