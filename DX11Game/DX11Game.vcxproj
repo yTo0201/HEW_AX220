@@ -209,6 +209,7 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="debugproc.h" />
+    <ClInclude Include="Define.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
