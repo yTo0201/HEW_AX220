@@ -179,3 +179,45 @@ bool Box::GetState(int num) {
 	return m_box[num].m_state;
 }
 
+//===============================================
+//		今と過去を分けれる描画(0が今、1が過去)
+//===============================================
+void Box::DrawOldNow(int nTime) {
+	ID3D11DeviceContext* pDC = GetDeviceContext();
+
+	for (int i = 0; i < MAX_BOX; ++i)
+	{
+		if (!m_box[i].m_use) {
+			continue;
+		}
+		if (!m_box[i].m_nTime == nTime)
+		{
+			continue;
+		}
+		// 不透明部分を描画
+		m_model.Draw(pDC, m_box[i].m_mtxWorld, eOpacityOnly);
+
+		// 半透明部分を描画
+		SetBlendState(BS_ALPHABLEND);	// アルファブレンド有効
+		SetZWrite(false);				// Zバッファ更新しない
+		m_model.Draw(pDC, m_box[i].m_mtxWorld, eTransparentOnly);
+		SetZWrite(true);				// Zバッファ更新する
+		SetBlendState(BS_NONE);			// アルファブレンド無効
+	}
+}
+
+//=======================================
+//	キューブ生成(0が今、1が過去)
+//=======================================
+int Box::CreateOldNow(XMFLOAT3 pos, int nTime) {
+	TBox* pBox = m_box;
+	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
+		if (pBox->m_use) continue;
+		pBox->m_pos = pos;
+		pBox->m_state = true;
+		pBox->m_use = true;
+		pBox->m_nTime = nTime;
+		return i;
+	}
+	return -1;
+}
