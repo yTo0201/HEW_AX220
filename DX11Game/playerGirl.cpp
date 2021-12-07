@@ -167,6 +167,7 @@ void Player_Girl::Update() {
 
 	//—§•û‘ÌˆÚ“®
 	//GetCube()->Move(m_nCube,m_mtxWorld);
+	/*ƒeƒXƒg*/
 
 	//“–‚½‚è”»’è
 }
