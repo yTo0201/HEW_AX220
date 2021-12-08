@@ -172,6 +172,7 @@
     <ClCompile Include="explosion.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fire.cpp" />
+    <ClCompile Include="gimmick.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="object_2D.cpp" />
     <ClCompile Include="object_3D.cpp" />
     <ClCompile Include="old.cpp" />
+    <ClCompile Include="plant.cpp" />
     <ClCompile Include="playerBoy.cpp" />
     <ClCompile Include="playerGirl.cpp" />
     <ClCompile Include="polygon.cpp" />
@@ -214,6 +216,7 @@
     <ClInclude Include="explosion.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fire.h" />
+    <ClInclude Include="gimmick.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="main.h" />
@@ -225,6 +228,7 @@
     <ClInclude Include="object_2D.h" />
     <ClInclude Include="object_3D.h" />
     <ClInclude Include="old.h" />
+    <ClInclude Include="plant.h" />
     <ClInclude Include="playerBoy.h" />
     <ClInclude Include="playerGirl.h" />
     <ClInclude Include="polygon.h" />

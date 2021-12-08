@@ -16,7 +16,7 @@ struct TBox {
 	XMFLOAT3	m_pos;		// 中心座標(モデル座標系)
 	bool		m_state;	//状態	true:壊されてない,false:壊されている
 	XMFLOAT4X4	m_mtxWorld;	// ワールドマトリックス
-
+	int			m_nTime;	// 今か過去か
 };
 
 //*****マクロ定義*****
@@ -40,6 +40,9 @@ public:
 	XMFLOAT2 GetSize();
 
 	bool GetState(int num);
+
+	void DrawOldNow(int nTime);
+	int CreateOldNow(XMFLOAT3 pos, int nTime);
 
 private:
 	CAssimpModel	m_model;	//モデル

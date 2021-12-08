@@ -10,11 +10,13 @@
 #include "input.h"
 //#include "box.h"
 #include "map.h"
+#include "gimmick.h"
 
 //*****グローバル変数*****
 static Old* g_pOld;		//過去
 static Now* g_pNow;		//現在
 //static Box* g_pBox;		//箱
+static Gimmick* g_pGimmick;	//ギミック
 
 const float FRAME_BUFFER_W = SCREEN_WIDTH;   //フレームバッファの幅。
 const float FRAME_BUFFER_H = SCREEN_HEIGHT;   //フレームバッファの高さ。
@@ -31,6 +33,8 @@ HRESULT InitSceneGame() {
 	g_pOld = new Old;
 	//現在初期化
 	g_pNow = new Now;
+	//ギミック初期化
+	g_pGimmick = new Gimmick;
 
 	//箱初期化
 	//g_pBox = new Box;
@@ -75,6 +79,8 @@ void UninitSceneGame() {
 	delete g_pOld;
 	//現在終了
 	delete g_pNow;
+	//ギミック終了
+	delete g_pGimmick;
 
 	//マップ終了
 	UninitMap();
@@ -99,6 +105,8 @@ void UpdateSceneGame() {
 	//マップ更新
 	UpdateMap();
 
+	//ギミック更新
+	g_pGimmick->Update(g_pOld->GetBoyPos());
 
 	if (GetKeyPress(VK_F1)) {
 		StartFadeOut(SCENE_TITLE);
@@ -119,11 +127,13 @@ void DrawSceneGame() {
 		d3dDeviceContext->RSSetViewports(1, &viewPorts[0]);
 		//今描画
 		g_pNow->Draw();
+		g_pGimmick->NowDraw();
 
 		//ビューポートを設定　下画面
 		d3dDeviceContext->RSSetViewports(1, &viewPorts[1]);
 		//過去描画
 		g_pOld->Draw();
+		g_pGimmick->OldDraw();
 
 
 		//g_pBox->Draw();
