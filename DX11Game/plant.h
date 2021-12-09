@@ -24,4 +24,5 @@ public:
 
 private:
 	Box* m_pBox;
+	XMFLOAT3 m_treePos;
 };
