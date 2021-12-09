@@ -1,40 +1,17 @@
-// Õ“Ë”»’è [collision.cpp]
+#include "Collision.h"
 
-#include "collision.h"
-
-// ‹…“¯m‚ÌÕ“Ë”»’è
-bool CollisionSphere(XMFLOAT3 Apos, float Ar, XMFLOAT3 Bpos, float Br)
+bool AABBCollision(XMFLOAT3 aPos, XMFLOAT3 bPos, XMFLOAT3 aSize, XMFLOAT3 bSize)
 {
-	float dx = Apos.x - Bpos.x;
-	float dy = Apos.y - Bpos.y;
-	float dz = Apos.z - Bpos.z;
-	float dr = Ar + Br;
-	return dx * dx + dy * dy + dz * dz <= dr * dr;
-}
+	aSize = XMFLOAT3(aSize.x / 2, aSize.y / 2, aSize.z / 2);
+	bSize = XMFLOAT3(bSize.x / 2, bSize.y / 2, bSize.z / 2);
 
-// AABB“¯m‚ÌÕ“Ë”»’è
-bool CollisionAABB(XMFLOAT3 Apos, XMFLOAT3 Asize, XMFLOAT3 Bpos, XMFLOAT3 Bsize)
-{
-	return (Apos.x - Asize.x <= Bpos.x + Bsize.x) &&
-		(Bpos.x - Bsize.x <= Apos.x + Asize.x) &&
-		(Apos.y - Asize.y <= Bpos.y + Bsize.y) &&
-		(Bpos.y - Bsize.y <= Apos.y + Asize.y) &&
-		(Apos.z - Asize.z <= Bpos.z + Bsize.z) &&
-		(Bpos.z - Bsize.z <= Apos.z + Asize.z);
-}
-
-//‰~“¯m‚Ì“–‚½‚è”»’è
-bool CollisionCircle(XMFLOAT2 vA, float fAr, XMFLOAT2 vB, float fBr) {
-	float dx = vA.x - vB.x;
-	float dy = vA.y - vB.y;
-	float dr = fAr + fBr;
-	return dx * dx + dy * dy <= dr * dr;
-}
-
-//‹éŒ`“¯m‚Ì“–‚½‚è”»’è
-bool CollisionRect(XMFLOAT2 vA, XMFLOAT2 vAs, XMFLOAT2 vB, XMFLOAT2 vBs) {
-	return	vA.x - vAs.x <= vB.x + vBs.x &&
-		vB.x - vBs.x <= vA.x + vAs.x &&
-		vA.y - vAs.y <= vB.y + vBs.y &&
-		vB.y - vBs.y <= vA.y + vAs.y;
+	if ((aPos.x - aSize.x <= bPos.x + bSize.x) && (bPos.x - bSize.x <= aPos.x + aSize.x) &&
+		(aPos.y - aSize.y <= bPos.y + bSize.y) && (bPos.y - bSize.y <= aPos.y + aSize.y) &&
+		(aPos.z - aSize.z <= bPos.z + bSize.z) && (bPos.z - bSize.z <= aPos.z + aSize.z))
+	{
+		// ÚG‚µ‚Ä‚¢‚é
+		return true;
+	}
+	// ÚG‚µ‚Ä‚¢‚È‚¢
+	return false;
 }
