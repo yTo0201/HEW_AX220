@@ -13,6 +13,9 @@ public:
 	~Player_Girl();
 	void Update();
 	void Draw();
+
+	XMFLOAT3 GetPos();
+	void SetPos(XMFLOAT3);
 private:
 	CAssimpModel	m_model;	//ÉÇÉfÉã
 	XMFLOAT3		m_pos;		// åªç›ÇÃà íu

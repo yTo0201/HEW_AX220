@@ -22,6 +22,7 @@
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	2.5f
 
+#define GRAVITY	(0.4f)	// 重力
 
 //*****グローバル変数*****
 
@@ -87,6 +88,8 @@ void Player_Girl::Update() {
 		m_rotDest.y = rotCamera.y - 90.0f;
 	}
 
+	// 重力
+	m_move.y -= GRAVITY;
 
 
 
@@ -186,4 +189,19 @@ void Player_Girl::Draw() {
 	m_model.Draw(pDC, m_mtxWorld, eTransparentOnly);
 	SetZWrite(true);				// Zバッファ更新する
 	SetBlendState(BS_NONE);			// アルファブレンド無効
+}
+
+//==============================================================
+//女の子の位置取得
+//==============================================================
+XMFLOAT3 Player_Girl::GetPos()
+{
+	return m_pos;
+}
+//==============================================================
+//女の子の位置設定
+//==============================================================
+void Player_Girl::SetPos(XMFLOAT3 pos)
+{
+	m_pos = pos;
 }

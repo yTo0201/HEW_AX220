@@ -5,6 +5,12 @@
 //
 //=============================================================================
 #include "plant.h"
+#include "collision.h"
+#include "playerGirl.h"
+#include "sceneGame.h"
+
+// グローバル変数
+Player_Girl* g_pPlayerGirl;
 
 Tree::Tree()
 {
@@ -16,6 +22,9 @@ Tree::~Tree()
 }
 void Tree::Update()
 {
+	g_pPlayerGirl = GetNow()->GetPlayerGirl();
+	if (g_pPlayerGirl->GetPos().x >= m_treePos.x - 2.0f && g_pPlayerGirl->GetPos().x <= m_treePos.x + 2.0f)
+		g_pPlayerGirl->SetPos(m_treePos);
 	m_pBox->Update();
 }
 void Tree::OldDraw()
@@ -30,7 +39,7 @@ void Tree::NowDraw()
 // 木の種を植える(男の子の行動)
 void Tree::Plant(XMFLOAT3 pos)
 {
-	pos.x += 10.0f;
+	pos.x += 0.0f;
 	pos.y += -8.0f;
 	m_pBox->CreateOldNow(pos, 1);
 }
@@ -38,10 +47,12 @@ void Tree::Plant(XMFLOAT3 pos)
 // 木が生える(今での変化)
 void Tree::Grow(XMFLOAT3 pos)
 {
-	pos.x += 10.0f;
+	pos.x += 0.0f;
 	for (int i = 0; i < 9; i++)
 	{
 		m_pBox->CreateOldNow(pos, 0);
 		pos.y += 10.0f;
 	}
+	g_pPlayerGirl->SetPos(pos);
+	m_treePos = pos;
 }
