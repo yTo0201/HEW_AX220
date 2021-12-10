@@ -23,7 +23,7 @@
 #endif
 
 // ïêà‰óyìs
-#ifdef TAKEI_HARUTO
+#ifndef TAKEI_HARUTO
 #define TAKEI_HARUTO
 #endif
 

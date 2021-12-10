@@ -7,8 +7,6 @@
 #include "playerBoy.h"
 #include "sceneGame.h"
 #include "input.h"
-#include "Define.h"
-#include "debugproc.h"
 
 //*****定数定義*****
 #define PLAYER_BOY_MODEL_PATH			"data/model/dog.x"
@@ -28,7 +26,6 @@
 //*****グローバル変数*****
 
 XMFLOAT3 g_BoyPos; // 男の子の座標
-XMFLOAT3 g_BoyOldPos; // 男の子の座標
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -42,7 +39,6 @@ Player_Girl::Player_Girl()
 
 	// 位置・回転・スケールの初期設定
 	m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
-	g_BoyOldPos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -73,29 +69,25 @@ void Player_Girl::Update() {
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	// 男の子の座標を取得
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
-	// 位置情報が変わらなければスキップ
-	if (g_BoyOldPos.x != g_BoyPos.x)
-	{
-		if (g_BoyPos.x <= m_pos.x) {
+	if (g_BoyPos.x <= m_pos.x) {
 
-			// 左移動
-			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
-			m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+		// 左移動
+		m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+		m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
-			m_rotDest.y = rotCamera.y + 90.0f;
+		m_rotDest.y = rotCamera.y + 90.0f;
 
-		}
-		else if (g_BoyPos.x > m_pos.x) {
-
-			// 右移動
-			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-			m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-
-			m_rotDest.y = rotCamera.y - 90.0f;
-		}
 	}
-	// 今の位置情報を古い情報として保存
-	g_BoyOldPos = g_BoyPos;
+	else if (g_BoyPos.x > m_pos.x) {
+
+		// 右移動
+		m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+		m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+
+		m_rotDest.y = rotCamera.y - 90.0f;
+	}
+
+
 
 
 	// 目的の角度までの差分
@@ -178,13 +170,6 @@ void Player_Girl::Update() {
 	/*テスト*/
 
 	//当たり判定
-#ifndef TAKEI_HARUTO
-
-	PrintDebugProc("ｲﾁ:%f%f%f\n", m_pos.x, m_pos.y, m_pos.z);
-	PrintDebugProc("ｲﾁ:%f%f%f\n", g_BoyPos.x, g_BoyPos.y, g_BoyPos.z);
-#endif
-
-
 }
 //==============================================================
 //描画
