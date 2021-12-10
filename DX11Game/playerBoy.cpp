@@ -15,7 +15,7 @@ enum DIR { RIGHT, LEFT };
 //*****定数定義*****
 #define PLAYER_BOY_MODEL_PATH			"data/model/slime001.fbx"
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.50f)		// 移動速度
+#define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// 移動慣性係数
 #define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// 回転速度
 #define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// 回転慣性係数
