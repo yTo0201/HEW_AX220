@@ -23,7 +23,7 @@ Tree::~Tree()
 void Tree::Update()
 {
 	g_pPlayerGirl = GetNow()->GetPlayerGirl();
-	if (g_pPlayerGirl->GetPos().x >= m_treePos.x - 2.0f && g_pPlayerGirl->GetPos().x <= m_treePos.x + 2.0f)
+	if (g_pPlayerGirl->GetPos().x >= m_treePos.x - 2.5f && g_pPlayerGirl->GetPos().x <= m_treePos.x + 2.5f)
 		g_pPlayerGirl->SetPos(m_treePos);
 	m_pBox->Update();
 }
