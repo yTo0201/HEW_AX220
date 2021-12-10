@@ -22,7 +22,7 @@
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	2.5f
 
-#define GRAVITY	(0.4f)	// 重力
+#define GRAVITY	(1.0f)	// 重力
 
 //*****グローバル変数*****
 
@@ -203,5 +203,9 @@ XMFLOAT3 Player_Girl::GetPos()
 //==============================================================
 void Player_Girl::SetPos(XMFLOAT3 pos)
 {
-	m_pos = pos;
+	if (m_pos.y < pos.y)
+	{
+		m_move.y += GRAVITY + 2.0f;
+	}
+	//m_pos = pos;
 }
