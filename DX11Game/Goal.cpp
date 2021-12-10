@@ -31,7 +31,7 @@ static bool g_use;
 //**************************************************************
 //プロトタイプ宣言
 //**************************************************************
-static HRESULT MakeVertexBullet(ID3D11Device* pDevice);
+//static HRESULT MakeVertexBullet(ID3D11Device* pDevice);
 
 HRESULT InitGoal()
 {
@@ -39,10 +39,10 @@ HRESULT InitGoal()
 	HRESULT hr = S_OK;
 
 	//頂点情報の作成
-	hr = MakeVertexBullet(pDevice);
-	if (FAILED(hr)) {
-		return hr;
-	}
+	//hr = MakeVertexBullet(pDevice);
+	//if (FAILED(hr)) {
+	//	return hr;
+	//}
 
 	//マテリアルの設定
 	g_material.Diffuse = M_DIFFUSE;
@@ -76,7 +76,7 @@ void UninitGoal()
 void UpdateGoal()
 {
 	Player_Girl m_girl;
-	XMFLOAT3 m_pos = m_girl.GetPos;
+	XMFLOAT3 m_pos = m_girl.GetPos();
 	if (m_pos.x > 640)
 	{
 		g_use = true;

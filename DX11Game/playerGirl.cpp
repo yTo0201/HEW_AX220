@@ -31,7 +31,7 @@
 XMFLOAT3 g_BoyPos; // 男の子の座標
 
 //==============================================================
-//ｺﾝｽﾄﾗｸﾀ
+//コンストラクタ
 //==============================================================
 Player_Girl::Player_Girl()
 
@@ -56,7 +56,7 @@ Player_Girl::Player_Girl()
 	//m_nCube = GetCube()->Create(XMFLOAT3(0.0f,0.0f,0.0f),XMFLOAT3(5.0f,5.0f,5.0f),m_mtxWorld);
 }
 //==============================================================
-//ﾃﾞｽﾄﾗｸﾀ
+//デストラクタ
 //==============================================================
 Player_Girl::~Player_Girl() {
 	// モデルの解放
@@ -74,23 +74,12 @@ void Player_Girl::Update() {
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	// 男の子の座標を取得
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
-	//if (g_BoyPos.x <= m_pos.x) {
 
-		// 左移動
-		//m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
-		//m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+	// 右移動
+	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
-		//m_rotDest.y = rotCamera.y + 90.0f;
-
-	//}
-	//else if (g_BoyPos.x > m_pos.x) {
-
-		// 右移動
-		m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-		m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-
-		m_rotDest.y = rotCamera.y - 90.0f;
-	//}
+	m_rotDest.y = rotCamera.y - 90.0f;
 
 	// 重力
 	m_move.y -= GRAVITY;
@@ -217,6 +206,4 @@ void Player_Girl::SetPos(XMFLOAT3 pos)
 	{
 		m_move.y += GRAVITY + 2.0f;
 	}
-	//m_pos = pos;
 }
-
