@@ -7,11 +7,13 @@
 #include "playerBoy.h"
 #include "sceneGame.h"
 #include "input.h"
+#include "collision.h"
+#include "map.h"
 
 //*****定数定義*****
 #define PLAYER_BOY_MODEL_PATH			"data/model/dog.x"
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.50f)		// 移動速度
+#define	PLAYER_BOY_VALUE_MOVE	(0.10f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE	(0.20f)		// 移動慣性係数
 #define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// 回転速度
 #define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// 回転慣性係数
@@ -66,27 +68,29 @@ Player_Girl::~Player_Girl() {
 //更新
 //==============================================================
 void Player_Girl::Update() {
+	XMFLOAT3 oldPos = m_pos;
+
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	// 男の子の座標を取得
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
-	if (g_BoyPos.x <= m_pos.x) {
+	//if (g_BoyPos.x <= m_pos.x) {
 
 		// 左移動
-		m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
-		m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+		//m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+		//m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
-		m_rotDest.y = rotCamera.y + 90.0f;
+		//m_rotDest.y = rotCamera.y + 90.0f;
 
-	}
-	else if (g_BoyPos.x > m_pos.x) {
+	//}
+	//else if (g_BoyPos.x > m_pos.x) {
 
 		// 右移動
 		m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 		m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
 		m_rotDest.y = rotCamera.y - 90.0f;
-	}
+	//}
 
 	// 重力
 	m_move.y -= GRAVITY;
@@ -142,6 +146,12 @@ void Player_Girl::Update() {
 	if (m_pos.y > 80.0f) {
 		m_pos.y = 80.0f;
 	}
+
+	if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
+	{
+		m_pos = oldPos;
+	}
+
 
 	if (GetKeyPress(VK_RETURN)) {
 		// リセット
