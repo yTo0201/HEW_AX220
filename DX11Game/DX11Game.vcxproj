@@ -173,6 +173,7 @@
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fire.cpp" />
     <ClCompile Include="gimmick.cpp" />
+    <ClCompile Include="Goal.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="fade.h" />
     <ClInclude Include="fire.h" />
     <ClInclude Include="gimmick.h" />
+    <ClInclude Include="Goal.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="main.h" />
