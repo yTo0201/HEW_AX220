@@ -22,6 +22,7 @@ private:
 	XMFLOAT3		m_rot;		// 現在の向き
 	XMFLOAT3		m_rotDest;	// 目的の向き
 	XMFLOAT3		m_move;		// 移動量
+	bool			m_bOnBox;	// 箱の上かどうか
 
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 

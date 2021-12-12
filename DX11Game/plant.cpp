@@ -39,7 +39,7 @@ void Tree::NowDraw()
 // ñÿÇÃéÌÇêAÇ¶ÇÈ(íjÇÃéqÇÃçsìÆ)
 void Tree::Plant(XMFLOAT3 pos)
 {
-	pos.x += 0.0f;
+	pos.x += 2.0f;
 	pos.y += -8.0f;
 	m_pBox->CreateOldNow(pos, 1);
 }
@@ -47,7 +47,7 @@ void Tree::Plant(XMFLOAT3 pos)
 // ñÿÇ™ê∂Ç¶ÇÈ(ç°Ç≈ÇÃïœâª)
 void Tree::Grow(XMFLOAT3 pos)
 {
-	pos.x += 0.0f;
+	pos.x += 2.0f;
 	for (int i = 0; i < 9; i++)
 	{
 		m_pBox->CreateOldNow(pos, 0);
