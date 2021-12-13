@@ -12,6 +12,11 @@
 #include "map.h"
 #include "gimmick.h"
 
+//*****定数定義*****
+#define OLD_SCROLL_SPEED	(0.3f)
+#define NOW_SCROLL_SPEED	(4.0f)
+
+
 //*****グローバル変数*****
 static Old* g_pOld;		//過去
 static Now* g_pNow;		//現在
@@ -104,6 +109,10 @@ void UpdateSceneGame() {
 	//g_pBox->Update();
 	//マップ更新
 	UpdateMap();
+
+	// 画面をスクロール
+	viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
+	viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
 
 	//ギミック更新
 	g_pGimmick->Update(g_pOld->GetBoyPos());

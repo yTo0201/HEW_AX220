@@ -194,3 +194,10 @@ void Player_Boy::Draw() {
 XMFLOAT3 Player_Boy::GetBoyPos() {
 	return m_pos;
 }
+
+//==============================================================
+//’j‚ÌŽqˆÚ“®—ÊŽæ“¾
+//==============================================================
+XMFLOAT3 Player_Boy::GetBoyMove() {
+	return m_move;
+}
