@@ -14,6 +14,7 @@ public:
 	void Update();
 	void Draw();
 	XMFLOAT3 GetBoyPos();
+	XMFLOAT3 GetBoyMove();
 private:
 	CAssimpModel	m_model;	//ÉÇÉfÉã
 	XMFLOAT3		m_pos;		// åªç›ÇÃà íu

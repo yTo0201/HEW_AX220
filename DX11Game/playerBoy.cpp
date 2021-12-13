@@ -147,6 +147,8 @@ void Player_Boy::Update() {
 	{
 		/*‰¼*/int num = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
+		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		GetBox()->Destroy(num);
 	}
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
@@ -193,4 +195,11 @@ void Player_Boy::Draw() {
 //==============================================================
 XMFLOAT3 Player_Boy::GetBoyPos() {
 	return m_pos;
+}
+
+//==============================================================
+//’j‚ÌŽqˆÚ“®—ÊŽæ“¾
+//==============================================================
+XMFLOAT3 Player_Boy::GetBoyMove() {
+	return m_move;
 }
