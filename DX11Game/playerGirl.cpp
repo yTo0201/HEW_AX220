@@ -141,8 +141,9 @@ void Player_Girl::Update() {
 	XMFLOAT3 boxPos = pBox->GetPos(CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject);
 	if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
 	{
-		if (m_pos.y >= boxPos.y + 6.0f)
+		if (m_pos.y > boxPos.y + 6.0f)
 		{
+			m_move.y = 0.0f;
 			m_bOnBox = true;
 		}
 		if(!m_bOnBox)
@@ -152,7 +153,7 @@ void Player_Girl::Update() {
 	}
 	if (m_bOnBox)
 	{
-		if (!(boxPos.x - 8.5f <= m_pos.x && boxPos.x + 8.5f >= m_pos.x || m_pos.y < boxPos.y + 6.0f))
+		if (m_pos.y <= boxPos.y)
 		{
 			m_bOnBox = false;
 		}
