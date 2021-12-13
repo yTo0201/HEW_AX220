@@ -29,6 +29,8 @@ ID3D11DeviceContext* d3dDeviceContext;   //D3D11デバイスコンテキスト、初期化済み
 D3D11_VIEWPORT viewPorts[2];   //分割ビューポート、これをモデルの描画前に設定する
 D3D11_VIEWPORT viewPortsReset;   //分割ビューポート、これをモデルの描画前に設定する
 
+float g_fBoyOldPosX;	// 男の子の過去座標
+
 //=============================
 //		初期化
 //=============================
@@ -112,7 +114,11 @@ void UpdateSceneGame() {
 
 	// 画面をスクロール
 	viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
-	viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+	{
+		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+	}
 
 	//ギミック更新
 	g_pGimmick->Update(g_pOld->GetBoyPos());
