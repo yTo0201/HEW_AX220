@@ -6,6 +6,8 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "bsphere.h"
+#include "sceneGame.h"
+#include "map.h"
 
 //*********************************************************
 //マクロ定義
@@ -14,6 +16,8 @@
 
 #define BOX_COLLISION_SIZE_X	4.0f
 #define BOX_COLLISION_SIZE_Y	4.0f
+
+#define BOY_HUND_LONG			10.0f
 
 //*********************************************************
 //グローバル変数
@@ -126,13 +130,14 @@ void Box::Draw(int num) {
 //=============================
 //	箱生成 引数 : モデル座標、サイズ、ワールドマトリックス
 //=============================
-int Box::Create(XMFLOAT3 pos) {
+int Box::Create(XMFLOAT3 pos, int nCat) {
 	TBox* pBox = m_box;
 	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
 		if (pBox->m_use) continue;
 		pBox->m_pos = pos;
 		pBox->m_state = true;
 		pBox->m_use = true;
+		pBox->m_nCat = nCat;
 
 		return i;
 	}
@@ -159,10 +164,37 @@ bool Box::Destroy(int num) {
 }
 
 //=============================
+//	箱の情報　取得
+//=============================
+TBox* Box::GetBox()
+{
+	return m_box;
+}
+
+//=============================
 //	箱　座標取得
 //=============================
 XMFLOAT3 Box::GetPos(int num) {
 	return m_box[num].m_pos;
+}
+
+//=============================
+//	箱　座標設定
+//=============================
+void Box::SetBoxPos(int num, XMFLOAT3 pos) {
+	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
+	if (!m_box[num].m_nCat == NORMAL)	// 今だけNORMALにしてあります(本来ならMOVE)
+		return;
+
+	if(pos.x > 0.0f)
+		m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
+	else if(pos.x < 0.0f)
+		m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
+
+	if(!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
+		m_box[num].m_pos.y += pos.y;
+	if(!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
+		m_box[num].m_pos.z += pos.z;
 }
 
 //=============================

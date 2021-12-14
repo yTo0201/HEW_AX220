@@ -25,4 +25,6 @@ private:
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 
 	int				m_nSphere;		//境界球番号
+
+	int				m_nHund;	// 持ち物
 };

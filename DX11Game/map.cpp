@@ -6,10 +6,6 @@
 #include "map.h"
 #include "box.h"
 #include "collision.h"
-//*****マクロ定義*****
-#define MAP_WIDTH	19
-#define MAP_HEIGHT	5
-
 
 
 OBJECT_INFO g_oldMap[MAP_HEIGHT][MAP_WIDTH] =
@@ -42,15 +38,15 @@ HRESULT InitMap() {
 			switch (g_oldMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
-				g_oldMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f+ j * 10.0f,30 - i * 20.0f,0.0f));
+			case NORMAL:
+				g_oldMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f+ j * 10.0f,30 - i * 20.0f,0.0f), g_oldMap[i][j].m_nCategory);
 				break;
 			}
 			switch (g_nowMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
-				g_nowMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f + j * 10.0f, 30 - i * 20.0f, 0.0f));
+			case NORMAL:
+				g_nowMap[i][j].m_nObject = g_pBox->Create(XMFLOAT3(-90.0f + j * 10.0f, 30 - i * 20.0f, 0.0f), g_nowMap[i][j].m_nCategory);
 				break;
 			}
 		}
@@ -67,14 +63,14 @@ void UninitMap() {
 			switch (g_oldMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
+			case NORMAL:
 				g_pBox->Release(g_oldMap[i][j].m_nObject);
 				break;
 			}
 			switch (g_nowMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
+			case NORMAL:
 				g_pBox->Release(g_nowMap[i][j].m_nObject);
 				break;
 			}
@@ -99,7 +95,7 @@ void DrawOldMap() {
 			switch (g_oldMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
+			case NORMAL:
 				g_pBox->Draw(g_oldMap[i][j].m_nObject);
 				break;
 			}
@@ -116,7 +112,7 @@ void DrawNowMap() {
 			switch (g_nowMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
+			case NORMAL:
 				g_pBox->Draw(g_nowMap[i][j].m_nObject);
 				break;
 			}
@@ -133,7 +129,7 @@ OBJECT_INFO CollisionOldMap(XMFLOAT2 pos, XMFLOAT2 size) {
 			switch (g_oldMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
+			case NORMAL:
 				//boxとの当たり判定
 				if (!g_pBox->GetState(g_oldMap[i][j].m_nObject))
 				{
@@ -162,7 +158,7 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 			switch (g_nowMap[i][j].m_nCategory) {
 			case 0:
 				break;
-			case 1:
+			case NORMAL:
 				//boxとの当たり判定
 				if (!g_pBox->GetState(g_nowMap[i][j].m_nObject))
 				{
@@ -186,4 +182,11 @@ OBJECT_INFO	CollisionNowMap(XMFLOAT2 pos, XMFLOAT2 size) {
 //==========================
 Box* GetBox() {
 	return g_pBox;
+}
+//==========================
+//		今のマップ　取得
+//==========================
+OBJECT_INFO* GetNowMap()
+{
+	return *g_nowMap;
 }

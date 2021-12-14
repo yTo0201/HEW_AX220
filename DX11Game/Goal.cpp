@@ -72,7 +72,7 @@ void UninitGoal()
 void UpdateGoal()
 {
 	Player_Girl m_girl;
-	XMFLOAT3 m_pos = m_girl.GetPos();
+	XMFLOAT3 m_pos = m_girl.GetGirlPos();
 	if (m_pos.x > 640)
 	{
 		g_use = true;
