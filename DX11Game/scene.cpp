@@ -4,6 +4,9 @@
 #include "sceneSample.h"
 #include "sceneTitle.h"
 #include "sceneGame.h"
+#include "mapselect.h"
+#include "stageselect.h"
+
 //グローバル変数
 static EScene g_eScene = SCENE_NONE;
 
@@ -26,6 +29,12 @@ void UpdateScene() {
 	switch (g_eScene) {
 	case SCENE_TITLE:		//タイトル画面
 		UpdateSceneTitle();
+		break;
+	case SCENE_MAP:
+		UpdateMapSelect();
+		break;
+	case SCENE_STAGE:
+		UpdateStageSelect();
 		break;
 	case SCENE_GAME:		//ゲーム画面
 		UpdateSceneGame();
