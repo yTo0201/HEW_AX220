@@ -24,7 +24,7 @@
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	2.5f
 
-#define GRAVITY	(0.4f)	// 重力
+#define GRAVITY	(1.0f)	// 重力
 
 //*****グローバル変数*****
 
@@ -34,7 +34,6 @@ XMFLOAT3 g_BoyPos; // 男の子の座標
 //ｺﾝｽﾄﾗｸﾀ
 //==============================================================
 Player_Girl::Player_Girl()
-
 {
 	HRESULT hr = S_OK;
 	ID3D11Device* pDevice = GetDevice();
@@ -46,6 +45,7 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_bOnBox = false;
 
 
 	// モデルデータの読み込み
@@ -74,27 +74,16 @@ void Player_Girl::Update() {
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	// 男の子の座標を取得
 	g_BoyPos = GetOld()->GetPlayerBoy()->GetBoyPos();
-	//if (g_BoyPos.x <= m_pos.x) {
 
-		// 左移動
-		//m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
-		//m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
+	// 右移動
+	m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+	m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
-		//m_rotDest.y = rotCamera.y + 90.0f;
-
-	//}
-	//else if (g_BoyPos.x > m_pos.x) {
-
-		// 右移動
-		m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-		m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
-
-		m_rotDest.y = rotCamera.y - 90.0f;
-	//}
+	m_rotDest.y = rotCamera.y - 90.0f;
 
 	// 重力
-	m_move.y -= GRAVITY;
-
+	if(!m_bOnBox)
+		m_move.y -= GRAVITY;
 
 
 	// 目的の角度までの差分
@@ -147,15 +136,33 @@ void Player_Girl::Update() {
 		m_pos.y = 80.0f;
 	}
 
+	// 当たり判定
+	Box* pBox = GetBox();
+	XMFLOAT3 boxPos = pBox->GetPos(CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject);
 	if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
 	{
-		m_pos = oldPos;
+		if (m_pos.y > boxPos.y + 6.0f)
+		{
+			m_move.y = 0.0f;
+			m_bOnBox = true;
+		}
+		if(!m_bOnBox)
+		{
+			m_pos.x = oldPos.x;
+		}
+	}
+	if (m_bOnBox)
+	{
+		if (m_pos.y <= boxPos.y)
+		{
+			m_bOnBox = false;
+		}
 	}
 
 
 	if (GetKeyPress(VK_RETURN)) {
 		// リセット
-		m_pos = XMFLOAT3(0.0f, -50.0f, 0.0f);
+		m_pos = XMFLOAT3(-100.0f, -50.0f, 0.0f);
 		m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -213,5 +220,10 @@ XMFLOAT3 Player_Girl::GetPos()
 //==============================================================
 void Player_Girl::SetPos(XMFLOAT3 pos)
 {
-	m_pos = pos;
+	if (m_pos.y < pos.y)
+	{
+		m_move.y += GRAVITY + 2.0f;
+	}
+	//m_pos = pos;
 }
+

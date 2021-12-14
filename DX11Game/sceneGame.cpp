@@ -12,6 +12,11 @@
 #include "map.h"
 #include "gimmick.h"
 
+//*****定数定義*****
+#define OLD_SCROLL_SPEED	(0.3f)
+#define NOW_SCROLL_SPEED	(4.0f)
+
+
 //*****グローバル変数*****
 static Old* g_pOld;		//過去
 static Now* g_pNow;		//現在
@@ -23,6 +28,8 @@ const float FRAME_BUFFER_H = SCREEN_HEIGHT;   //フレームバッファの高さ。
 ID3D11DeviceContext* d3dDeviceContext;   //D3D11デバイスコンテキスト、初期化済みとする
 D3D11_VIEWPORT viewPorts[2];   //分割ビューポート、これをモデルの描画前に設定する
 D3D11_VIEWPORT viewPortsReset;   //分割ビューポート、これをモデルの描画前に設定する
+
+float g_fBoyOldPosX;	// 男の子の過去座標
 
 //=============================
 //		初期化
@@ -104,6 +111,14 @@ void UpdateSceneGame() {
 	//g_pBox->Update();
 	//マップ更新
 	UpdateMap();
+
+	// 画面をスクロール
+	viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
+	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+	{
+		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+	}
 
 	//ギミック更新
 	g_pGimmick->Update(g_pOld->GetBoyPos());

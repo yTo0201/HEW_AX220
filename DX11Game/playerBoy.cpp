@@ -15,7 +15,7 @@ enum DIR { RIGHT, LEFT };
 //*****’è”’è‹`*****
 #define PLAYER_BOY_MODEL_PATH			"data/model/slime001.fbx"
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.50f)		// ˆÚ“®‘¬“x
+#define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// ˆÚ“®‘¬“x
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// ˆÚ“®Šµ«ŒW”
 #define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// ‰ñ“]‘¬“x
 #define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// ‰ñ“]Šµ«ŒW”
@@ -147,6 +147,8 @@ void Player_Boy::Update() {
 	{
 		/*‰¼*/int num = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
+		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		GetBox()->Destroy(num);
 	}
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
@@ -193,4 +195,11 @@ void Player_Boy::Draw() {
 //==============================================================
 XMFLOAT3 Player_Boy::GetBoyPos() {
 	return m_pos;
+}
+
+//==============================================================
+//’j‚ÌŽqˆÚ“®—ÊŽæ“¾
+//==============================================================
+XMFLOAT3 Player_Boy::GetBoyMove() {
+	return m_move;
 }
