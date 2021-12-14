@@ -14,15 +14,18 @@ public:
 	void Update();
 	void Draw();
 
-	XMFLOAT3 GetPos();
-	void SetPos(XMFLOAT3);
+	XMFLOAT3 GetGirlPos();
+	void SetGirlPos(XMFLOAT3);
+
+	bool CheckField();
 private:
 	CAssimpModel	m_model;	//モデル
 	XMFLOAT3		m_pos;		// 現在の位置
 	XMFLOAT3		m_rot;		// 現在の向き
 	XMFLOAT3		m_rotDest;	// 目的の向き
 	XMFLOAT3		m_move;		// 移動量
-	bool			m_bOnBox;	// 箱の上かどうか
+	bool			m_bJump;	// ジャンプ中フラグ
+	bool			m_bLand;	// 着地・接地フラグ
 
 	XMFLOAT4X4		m_mtxWorld;		// ワールドマトリックス
 

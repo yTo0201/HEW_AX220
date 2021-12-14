@@ -45,6 +45,7 @@ Player_Boy::Player_Boy()
 	m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_nHund = 9999;
 
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
@@ -112,7 +113,8 @@ void Player_Boy::Update() {
 	m_pos.y += m_move.y;
 	m_pos.z += m_move.z;
 
-
+	// 持ち物を一緒に移動
+	GetBox()->SetBoxPos(m_nHund, m_move);
 
 	// 移動量に慣性をかける
 	m_move.x += (0.0f - m_move.x) * PLAYER_BOY_RATE_MOVE;
@@ -150,6 +152,20 @@ void Player_Boy::Update() {
 		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
 	}
+	// オブジェクトを持つ
+	if (GetKeyPress(VK_A))
+	{
+		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
+			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
+			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;	
+	}
+	// オブジェクトを放す
+	if (GetKeyPress(VK_S))
+	{
+		m_nHund = 9999;
+	}
+
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
 
