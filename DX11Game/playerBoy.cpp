@@ -7,6 +7,7 @@
 #include "input.h"
 #include "map.h"
 #include "bsphere.h"
+#include "debugproc.h"
 
 
 //*****—ñ‹“Œ^*****
@@ -150,6 +151,17 @@ void Player_Boy::Update() {
 		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
 	}
+#ifndef TAKEI_HARUTO
+	//” ‚ÌˆÚ“®
+	if (GetKeyPress(VK_X))
+	{
+		int num = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		GetBox()->Move(num, m_pos);
+		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		GetBox()->Move(num,m_pos);
+	}
+	PrintDebugProc("x:%2fy:%2fz:%2f",m_pos.x,m_pos.y,m_pos.z);
+#endif 
 
 	XMMATRIX mtxWorld, mtxRot, mtxTranslate;
 

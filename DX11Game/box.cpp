@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "bsphere.h"
+#include "input.h"
 
 //*********************************************************
 //マクロ定義
@@ -53,6 +54,7 @@ Box::~Box() {
 //=============================
 void Box::Update() {
 	XMMATRIX mtxWorld,mtxTranslate;
+	
 
 	for (int i = 0; i < MAX_BOX; ++i) 
 	{
@@ -97,6 +99,7 @@ void Box::Draw() {
 		SetZWrite(true);				// Zバッファ更新する
 		SetBlendState(BS_NONE);			// アルファブレンド無効
 	}
+	
 }
 
 //=============================
@@ -156,6 +159,15 @@ bool Box::Destroy(int num) {
 		return false;
 	m_box[num].m_state = false;
 	return true;
+}
+
+//============================
+//	箱　移動
+//============================
+void Box::Move(int num, XMFLOAT3 pos){
+	m_box[num].m_pos.x = pos.x + BOX_COLLISION_SIZE_X;
+	m_box[num].m_pos.y = pos.y + BOX_COLLISION_SIZE_Y;
+	m_box[num].m_pos.z = pos.z;
 }
 
 //=============================

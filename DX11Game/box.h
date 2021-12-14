@@ -35,6 +35,7 @@ public:
 	void Release(int num);
 
 	bool Destroy(int num);
+	void Move(int num, XMFLOAT3 pos);
 
 	XMFLOAT3 GetPos(int num);
 	XMFLOAT2 GetSize();

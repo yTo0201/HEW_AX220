@@ -6,9 +6,11 @@
 #include "map.h"
 #include "box.h"
 #include "collision.h"
+#include "input.h"
 //*****マクロ定義*****
 #define MAP_WIDTH	19
 #define MAP_HEIGHT	5
+
 
 
 
@@ -36,6 +38,7 @@ static Box* g_pBox;
 //		初期化
 //=============================
 HRESULT InitMap() {
+	
 	g_pBox = new Box;
 	for (int i = 0; i < MAP_HEIGHT; ++i) {
 		for (int j = 0; j < MAP_WIDTH; ++j) {
@@ -87,6 +90,7 @@ void UninitMap() {
 //		更新
 //=============================
 void UpdateMap() {
+
 	g_pBox->Update();
 }
 
