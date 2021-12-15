@@ -24,11 +24,12 @@
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	2.5f
 
-#define GRAVITY	(1.0f)	// 重力
+#define GRAVITY	(2.0f)	// 重力
 
 //*****グローバル変数*****
 
 XMFLOAT3 g_BoyPos; // 男の子の座標
+XMFLOAT3 g_oldPos; // 前の座標
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -45,7 +46,9 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_bOnBox = false;
+	g_oldPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_bJump = false;
+	m_bLand = false;
 
 
 	// モデルデータの読み込み
@@ -68,7 +71,7 @@ Player_Girl::~Player_Girl() {
 //更新
 //==============================================================
 void Player_Girl::Update() {
-	XMFLOAT3 oldPos = m_pos;
+	g_oldPos = m_pos;
 
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
@@ -82,8 +85,7 @@ void Player_Girl::Update() {
 	m_rotDest.y = rotCamera.y - 90.0f;
 
 	// 重力
-	if(!m_bOnBox)
-		m_move.y -= GRAVITY;
+	m_move.y -= GRAVITY;
 
 
 	// 目的の角度までの差分
@@ -137,27 +139,44 @@ void Player_Girl::Update() {
 	}
 
 	// 当たり判定
-	Box* pBox = GetBox();
-	XMFLOAT3 boxPos = pBox->GetPos(CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject);
 	if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
 	{
-		if (m_pos.y > boxPos.y + 6.0f)
-		{
-			m_move.y = 0.0f;
-			m_bOnBox = true;
-		}
-		if(!m_bOnBox)
-		{
-			m_pos.x = oldPos.x;
-		}
+		m_pos = g_oldPos;
 	}
-	if (m_bOnBox)
+	//----地形との当たり判定----
+	if (CheckField())
+	{	//乗った場合の処理
+		m_move.y = 0.0f;
+		m_bJump = false;
+		m_bLand = true;
+	}
+	else
 	{
-		if (m_pos.y <= boxPos.y)
+		if (m_bLand)
 		{
-			m_bOnBox = false;
+			m_bJump = true;
+			m_bLand = false;
 		}
 	}
+	//if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
+	//{
+	//	if (m_pos.y > boxPos.y + 6.0f)
+	//	{
+	//		m_move.y = 0.0f;
+	//		m_bOnBox = true;
+	//	}
+	//	if(!m_bOnBox)
+	//	{
+	//		m_pos.x = oldPos.x;
+	//	}
+	//}
+	//if (m_bOnBox)
+	//{
+	//	if (m_pos.y <= boxPos.y)
+	//	{
+	//		m_bOnBox = false;
+	//	}
+	//}
 
 
 	if (GetKeyPress(VK_RETURN)) {
@@ -211,19 +230,50 @@ void Player_Girl::Draw() {
 //==============================================================
 //女の子の位置取得
 //==============================================================
-XMFLOAT3 Player_Girl::GetPos()
+XMFLOAT3 Player_Girl::GetGirlPos()
 {
 	return m_pos;
 }
 //==============================================================
 //女の子の位置設定
 //==============================================================
-void Player_Girl::SetPos(XMFLOAT3 pos)
+void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 {
-	if (m_pos.y < pos.y)
+	if (m_pos.y < pos.y)	
 	{
-		m_move.y += GRAVITY + 2.0f;
+		m_move.y += GRAVITY + 3.0f;
 	}
 	//m_pos = pos;
 }
 
+//==============================================================
+//女の子の当たり判定
+//==============================================================
+bool Player_Girl::CheckField()
+{
+	Box* pBox = GetBox();
+	OBJECT_INFO* pNowMap = GetNowMap();
+
+	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pNowMap++) {
+		switch (pNowMap->m_nCategory) {
+		case 0:
+			break;
+		case NORMAL:
+			XMFLOAT3 boxPos = pBox->GetPos(pNowMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 2.0f) continue;
+			if (boxPos.x + 4.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y - 1.0f && g_oldPos.y <= boxPos.y - 1.0f)
+			{
+				m_pos.y = boxPos.y - 1.0f;
+				return true;
+			}
+			else if (m_pos.y <= boxPos.y + 2.0f && g_oldPos.y >= boxPos.y + 2.0f)
+			{
+				m_pos.y = boxPos.y + 2.0f;
+				m_move.y = 0.0f;
+			}
+			break;
+		}
+	}
+}

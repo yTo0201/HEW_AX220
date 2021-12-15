@@ -23,8 +23,8 @@ Tree::~Tree()
 void Tree::Update()
 {
 	g_pPlayerGirl = GetNow()->GetPlayerGirl();
-	if (g_pPlayerGirl->GetPos().x >= m_treePos.x - 2.5f && g_pPlayerGirl->GetPos().x <= m_treePos.x + 2.5f)
-		g_pPlayerGirl->SetPos(m_treePos);
+	if (g_pPlayerGirl->GetGirlPos().x >= m_treePos.x - 3.5f && g_pPlayerGirl->GetGirlPos().x <= m_treePos.x + 3.5f)
+		g_pPlayerGirl->SetGirlPos(m_treePos);
 	m_pBox->Update();
 }
 void Tree::OldDraw()
@@ -53,6 +53,6 @@ void Tree::Grow(XMFLOAT3 pos)
 		m_pBox->CreateOldNow(pos, 0);
 		pos.y += 10.0f;
 	}
-	g_pPlayerGirl->SetPos(pos);
+	g_pPlayerGirl->SetGirlPos(pos);
 	m_treePos = pos;
 }
