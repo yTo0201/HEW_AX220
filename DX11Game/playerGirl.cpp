@@ -11,25 +11,25 @@
 #include "map.h"
 
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/girl.fbx"
+#define PLAYER_BOY_MODEL_PATH			"data/model/dog.x"
 
-#define	PLAYER_BOY_VALUE_MOVE	(0.10f)		// 移動速度
+#define	PLAYER_BOY_VALUE_MOVE	(0.05f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE	(0.20f)		// 移動慣性係数
 #define	PLAYER_BOY_VALUE_ROTATE	(9.0f)		// 回転速度
 #define	PLAYER_BOY_RATE_ROTATE	(0.20f)		// 回転慣性係数
 
-#define PLAYER_BOY_COLLISION_SIZE_X		2.5f
-#define PLAYER_BOY_COLLISION_SIZE_Y		2.5f
+#define PLAYER_BOY_COLLISION_SIZE_X		4.0f
+#define PLAYER_BOY_COLLISION_SIZE_Y		4.0f
 #define PLAYER_BOY_COLLISION_SIZE_Z		2.5f
 
-#define PLAYER_BOY_COLLISION_SIZE_RAD	2.5f
+#define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define GRAVITY	(2.0f)	// 重力
+#define GRAVITY_GIRL	(2.0f)	// 重力
 
 //*****グローバル変数*****
 
 XMFLOAT3 g_BoyPos; // 男の子の座標
-XMFLOAT3 g_oldPos; // 前の座標
+XMFLOAT3 g_oldGirlPos; // 前の座標
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -46,8 +46,7 @@ Player_Girl::Player_Girl()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	g_oldPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_bJump = false;
+	g_oldGirlPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_bLand = false;
 
 
@@ -71,7 +70,7 @@ Player_Girl::~Player_Girl() {
 //更新
 //==============================================================
 void Player_Girl::Update() {
-	g_oldPos = m_pos;
+	g_oldGirlPos = m_pos;
 
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
@@ -85,7 +84,7 @@ void Player_Girl::Update() {
 	m_rotDest.y = rotCamera.y - 90.0f;
 
 	// 重力
-	m_move.y -= GRAVITY;
+	m_move.y -= GRAVITY_GIRL;
 
 
 	// 目的の角度までの差分
@@ -133,55 +132,39 @@ void Player_Girl::Update() {
 	}
 	if (m_pos.y < -45.0f) {
 		m_pos.y = -45.0f;
+		m_move.y = 0.0f;
+		m_bLand = true;
 	}
 	if (m_pos.y > 80.0f) {
 		m_pos.y = 80.0f;
 	}
 
 	// 当たり判定
-	if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
+	OBJECT_INFO collision = CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+	if (collision.m_nCategory > 0)
 	{
-		m_pos = g_oldPos;
+		if (m_bLand == true && collision.m_bOnBox == true)
+			m_pos.y = g_oldGirlPos.y;
+		else if (m_bLand == true)
+			m_pos.x = g_oldGirlPos.x;
 	}
 	//----地形との当たり判定----
 	if (CheckField())
 	{	//乗った場合の処理
 		m_move.y = 0.0f;
-		m_bJump = false;
 		m_bLand = true;
 	}
 	else
 	{
 		if (m_bLand)
 		{
-			m_bJump = true;
 			m_bLand = false;
 		}
 	}
-	//if (CollisionNowMap(XMFLOAT2(m_pos.x, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
-	//{
-	//	if (m_pos.y > boxPos.y + 6.0f)
-	//	{
-	//		m_move.y = 0.0f;
-	//		m_bOnBox = true;
-	//	}
-	//	if(!m_bOnBox)
-	//	{
-	//		m_pos.x = oldPos.x;
-	//	}
-	//}
-	//if (m_bOnBox)
-	//{
-	//	if (m_pos.y <= boxPos.y)
-	//	{
-	//		m_bOnBox = false;
-	//	}
-	//}
-
 
 	if (GetKeyPress(VK_RETURN)) {
 		// リセット
-		m_pos = XMFLOAT3(-100.0f, -50.0f, 0.0f);
+		m_pos = XMFLOAT3(-100.0f, -45.0f, 0.0f);
 		m_move = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -234,6 +217,10 @@ XMFLOAT3 Player_Girl::GetGirlPos()
 {
 	return m_pos;
 }
+XMFLOAT3 Player_Girl::GetGirlMove()
+{
+	return m_move;
+}
 //==============================================================
 //女の子の位置設定
 //==============================================================
@@ -241,7 +228,7 @@ void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 {
 	if (m_pos.y < pos.y)	
 	{
-		m_move.y += GRAVITY + 3.0f;
+		m_move.y += GRAVITY_GIRL + 3.0f;
 	}
 	//m_pos = pos;
 }
@@ -252,25 +239,50 @@ void Player_Girl::SetGirlPos(XMFLOAT3 pos)
 bool Player_Girl::CheckField()
 {
 	Box* pBox = GetBox();
-	OBJECT_INFO* pNowMap = GetNowMap();
+	OBJECT_INFO* pNowMap = GetMap(0);
 
+	XMFLOAT3 boxPos;
 	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pNowMap++) {
 		switch (pNowMap->m_nCategory) {
 		case 0:
 			break;
 		case NORMAL:
-			XMFLOAT3 boxPos = pBox->GetPos(pNowMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 2.0f) continue;
-			if (boxPos.x + 4.0f <= m_pos.x) continue;
-
-			if (m_pos.y >= boxPos.y - 1.0f && g_oldPos.y <= boxPos.y - 1.0f)
+			if (!pBox->GetState(pNowMap->m_nObject))
 			{
-				m_pos.y = boxPos.y - 1.0f;
+				break;
+			}
+			boxPos = pBox->GetPos(pNowMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 8.0f) continue;
+			if (boxPos.x + 8.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y + 18.0f && g_oldGirlPos.y <= boxPos.y + 18.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
 				return true;
 			}
-			else if (m_pos.y <= boxPos.y + 2.0f && g_oldPos.y >= boxPos.y + 2.0f)
+			else if (m_pos.y <= boxPos.y - 5.0f && g_oldGirlPos.y >= boxPos.y - 5.0f)
 			{
-				m_pos.y = boxPos.y + 2.0f;
+				m_pos.y = boxPos.y - 5.0f;
+				m_move.y = 0.0f;
+			}
+			break;
+		case CARRY:
+			if (!pBox->GetState(pNowMap->m_nObject))
+			{
+				break;
+			}
+			boxPos = pBox->GetPos(pNowMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 8.0f) continue;
+			if (boxPos.x + 8.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y + 18.0f && g_oldGirlPos.y <= boxPos.y + 18.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
+				return true;
+			}
+			else if (m_pos.y <= boxPos.y - 5.0f && g_oldGirlPos.y >= boxPos.y - 5.0f)
+			{
+				m_pos.y = boxPos.y - 5.0f;
 				m_move.y = 0.0f;
 			}
 			break;

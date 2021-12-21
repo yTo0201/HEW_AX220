@@ -13,7 +13,7 @@
 #include "gimmick.h"
 
 //*****’è”’è‹`*****
-#define OLD_SCROLL_SPEED	(0.3f)
+#define OLD_SCROLL_SPEED	(4.0f)
 #define NOW_SCROLL_SPEED	(4.0f)
 
 
@@ -30,6 +30,7 @@ D3D11_VIEWPORT viewPorts[2];   //•ªŠ„ƒrƒ…[ƒ|[ƒgA‚±‚ê‚ðƒ‚ƒfƒ‹‚Ì•`‰æ‘O‚ÉÝ’è‚·‚
 D3D11_VIEWPORT viewPortsReset;   //•ªŠ„ƒrƒ…[ƒ|[ƒgA‚±‚ê‚ðƒ‚ƒfƒ‹‚Ì•`‰æ‘O‚ÉÝ’è‚·‚é
 
 float g_fBoyOldPosX;	// ’j‚ÌŽq‚Ì‰ß‹ŽÀ•W
+float g_fGirlOldPosX;	// —‚ÌŽq‚Ì‰ß‹ŽÀ•W
 
 //=============================
 //		‰Šú‰»
@@ -113,7 +114,11 @@ void UpdateSceneGame() {
 	UpdateMap();
 
 	// ‰æ–Ê‚ðƒXƒNƒ[ƒ‹
-	viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
+	if (g_fGirlOldPosX != g_pNow->GetPlayerGirl()->GetGirlPos().x)
+	{
+		viewPorts[0].TopLeftX -= g_pNow->GetPlayerGirl()->GetGirlMove().x * OLD_SCROLL_SPEED;
+		g_fGirlOldPosX = g_pNow->GetPlayerGirl()->GetGirlPos().x;
+	}
 	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
 	{
 		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
