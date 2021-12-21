@@ -13,7 +13,7 @@
 enum DIR { RIGHT, LEFT };
 
 //*****定数定義*****
-#define PLAYER_BOY_MODEL_PATH			"data/model/slime001.fbx"
+#define PLAYER_BOY_MODEL_PATH			"data/model/boy.fbx"
 
 #define	PLAYER_BOY_VALUE_MOVE	(0.15f)		// 移動速度
 #define	PLAYER_BOY_RATE_MOVE		(0.20f)		// 移動慣性係数
@@ -28,7 +28,8 @@ enum DIR { RIGHT, LEFT };
 
 
 //*****グローバル変数*****
-
+static int g_nowHand;
+static int timeJudge; // 0:過去,1:未来
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -46,6 +47,8 @@ Player_Boy::Player_Boy()
 	m_rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_nHund = 9999;
+	g_nowHand = 9999;
+	timeJudge = 0;
 
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
@@ -114,7 +117,8 @@ void Player_Boy::Update() {
 	m_pos.z += m_move.z;
 
 	// 持ち物を一緒に移動
-	GetBox()->SetBoxPos(m_nHund, m_move);
+	GetBox()->SetBoxPos(m_nHund, m_move,0);   // 過去の座標を反映
+	GetBox()->SetBoxPos(g_nowHand, m_move,1); // 未来の座標を一時保存
 
 	// 移動量に慣性をかける
 	m_move.x += (0.0f - m_move.x) * PLAYER_BOY_RATE_MOVE;
@@ -152,18 +156,27 @@ void Player_Boy::Update() {
 		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
 	}
+
+
+
 	// オブジェクトを持つ
 	if (GetKeyPress(VK_A))
 	{
-		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
+		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0) {
 			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
-		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0)
-			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;	
+			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		}
+		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0) {
+			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
+		}
 	}
 	// オブジェクトを放す
 	if (GetKeyPress(VK_S))
 	{
 		m_nHund = 9999;
+		GetBox()->SetOldBoxPos(g_nowHand);
+		
 	}
 
 
