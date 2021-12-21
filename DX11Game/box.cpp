@@ -34,6 +34,7 @@ Box::Box(){
 	// 位置・回転・スケールの初期設定
 	for (int i = 0; i < MAX_BOX; ++i) {
 		m_box[i].m_pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_box[i].m_oldPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_box[i].m_state = true;
 		m_box[i].m_use = false;
 	}
@@ -135,6 +136,7 @@ int Box::Create(XMFLOAT3 pos, int nCat) {
 	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
 		if (pBox->m_use) continue;
 		pBox->m_pos = pos;
+		pBox->m_oldPos = pos;
 		pBox->m_state = true;
 		pBox->m_use = true;
 		pBox->m_nCat = nCat;
@@ -181,20 +183,53 @@ XMFLOAT3 Box::GetPos(int num) {
 //=============================
 //	箱　座標設定
 //=============================
-void Box::SetBoxPos(int num, XMFLOAT3 pos) {
+void Box::SetBoxPos(int num, XMFLOAT3 pos,int time) {
 	XMFLOAT3 boyPos = GetOld()->GetBoyPos();
 	if (!m_box[num].m_nCat == NORMAL)	// 今だけNORMALにしてあります(本来ならMOVE)
 		return;
 
-	if(pos.x > 0.0f)
-		m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
-	else if(pos.x < 0.0f)
-		m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
+	// 過去用
+	if (time == 0){
+		if (pos.x > 0.0f)
+			m_box[num].m_pos.x = boyPos.x + BOY_HUND_LONG;
+		else if (pos.x < 0.0f)
+			m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
 
-	if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
-		m_box[num].m_pos.y += pos.y;
-	if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
-		m_box[num].m_pos.z += pos.z;
+		if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
+			m_box[num].m_pos.y += pos.y;
+		if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
+			m_box[num].m_pos.z += pos.z;
+	}
+	// 未来用
+	if (time == 1) {
+		if (pos.x > 0.0f)
+			m_box[num].m_oldPos.x = boyPos.x + BOY_HUND_LONG;
+		else if (pos.x < 0.0f)
+			m_box[num].m_oldPos.x = boyPos.x - BOY_HUND_LONG;
+
+		if (!(boyPos.y - m_box[num].m_oldPos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.y <= -BOY_HUND_LONG))
+			m_box[num].m_oldPos.y += pos.y;
+		if (!(boyPos.z - m_box[num].m_oldPos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_oldPos.z <= -BOY_HUND_LONG))
+			m_box[num].m_oldPos.z += pos.z;
+	}
+#ifndef TAKEI_HARUTO
+	PrintDebugProc("ﾎｿﾞﾝｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", m_box[num].m_pos.x, m_box[num].m_pos.y, m_box[num].m_pos.z);
+	PrintDebugProc("ﾊﾝｴｲｻﾞﾋｮｳx:%2f,y:%2f,z:%2f\n", 
+		m_box[num].m_oldPos.x, m_box[num].m_oldPos.y, m_box[num].m_oldPos.z);
+#endif
+}
+
+//=============================
+//	箱　座標反映
+//=============================
+void Box::SetOldBoxPos(int num) {
+	if (!m_box[num].m_nCat == NORMAL)	// 今だけNORMALにしてあります(本来ならMOVE)
+		return;
+
+	m_box[num].m_pos.x = m_box[num].m_oldPos.x;
+	m_box[num].m_pos.y = m_box[num].m_oldPos.y;
+	m_box[num].m_pos.z = m_box[num].m_oldPos.z;
+
 }
 
 //=============================
@@ -246,6 +281,7 @@ int Box::CreateOldNow(XMFLOAT3 pos, int nTime) {
 	for (int i = 0; i < MAX_BOX; ++i, ++pBox) {
 		if (pBox->m_use) continue;
 		pBox->m_pos = pos;
+		pBox->m_oldPos = pos;
 		pBox->m_state = true;
 		pBox->m_use = true;
 		pBox->m_nTime = nTime;
