@@ -191,9 +191,9 @@ void Box::SetBoxPos(int num, XMFLOAT3 pos) {
 	else if(pos.x < 0.0f)
 		m_box[num].m_pos.x = boyPos.x - BOY_HUND_LONG;
 
-	if(!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
+	if (!(boyPos.y - m_box[num].m_pos.y >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.y <= -BOY_HUND_LONG))
 		m_box[num].m_pos.y += pos.y;
-	if(!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
+	if (!(boyPos.z - m_box[num].m_pos.z >= BOY_HUND_LONG || boyPos.y - m_box[num].m_pos.z <= -BOY_HUND_LONG))
 		m_box[num].m_pos.z += pos.z;
 }
 

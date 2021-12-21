@@ -15,6 +15,7 @@ public:
 	void Draw();
 
 	XMFLOAT3 GetGirlPos();
+	XMFLOAT3 GetGirlMove();
 	void SetGirlPos(XMFLOAT3);
 
 	bool CheckField();
