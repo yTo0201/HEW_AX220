@@ -47,7 +47,6 @@ Player_Girl::Player_Girl()
 	m_rotDest = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_BoyPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	g_oldGirlPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_bJump = false;
 	m_bLand = false;
 
 
@@ -133,6 +132,8 @@ void Player_Girl::Update() {
 	}
 	if (m_pos.y < -45.0f) {
 		m_pos.y = -45.0f;
+		m_move.y = 0.0f;
+		m_bLand = true;
 	}
 	if (m_pos.y > 80.0f) {
 		m_pos.y = 80.0f;
@@ -151,14 +152,12 @@ void Player_Girl::Update() {
 	if (CheckField())
 	{	//èÊÇ¡ÇΩèÍçáÇÃèàóù
 		m_move.y = 0.0f;
-		m_bJump = false;
 		m_bLand = true;
 	}
 	else
 	{
 		if (m_bLand)
 		{
-			m_bJump = true;
 			m_bLand = false;
 		}
 	}
