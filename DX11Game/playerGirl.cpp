@@ -241,6 +241,7 @@ bool Player_Girl::CheckField()
 	Box* pBox = GetBox();
 	OBJECT_INFO* pNowMap = GetMap(0);
 
+	XMFLOAT3 boxPos;
 	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pNowMap++) {
 		switch (pNowMap->m_nCategory) {
 		case 0:
@@ -250,7 +251,27 @@ bool Player_Girl::CheckField()
 			{
 				break;
 			}
-			XMFLOAT3 boxPos = pBox->GetPos(pNowMap->m_nObject);
+			boxPos = pBox->GetPos(pNowMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 8.0f) continue;
+			if (boxPos.x + 8.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y + 18.0f && g_oldGirlPos.y <= boxPos.y + 18.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
+				return true;
+			}
+			else if (m_pos.y <= boxPos.y - 5.0f && g_oldGirlPos.y >= boxPos.y - 5.0f)
+			{
+				m_pos.y = boxPos.y - 5.0f;
+				m_move.y = 0.0f;
+			}
+			break;
+		case CARRY:
+			if (!pBox->GetState(pNowMap->m_nObject))
+			{
+				break;
+			}
+			boxPos = pBox->GetPos(pNowMap->m_nObject);
 			if (m_pos.x <= boxPos.x - 8.0f) continue;
 			if (boxPos.x + 8.0f <= m_pos.x) continue;
 

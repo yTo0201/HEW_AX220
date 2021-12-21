@@ -193,10 +193,12 @@ void Player_Boy::Update() {
 	//攻撃の当たり判定
 	if (GetKeyPress(VK_SPACE))
 	{
-		/*仮*/int num = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
-		GetBox()->Destroy(num);
-		num = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
-		GetBox()->Destroy(num);
+		/*仮*/OBJECT_INFO object = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+		if(object.m_nCategory == BREAK)
+			GetBox()->Destroy(object.m_nObject);
+		object = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y));
+		if (object.m_nCategory == BREAK)
+			GetBox()->Destroy(object.m_nObject);
 	}
 
 
@@ -204,11 +206,11 @@ void Player_Boy::Update() {
 	// オブジェクトを持つ
 	if (GetKeyPress(VK_A))
 	{
-		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0) {
+		if (CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		}
-		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory > 0) {
+		if (CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nCategory == CARRY) {
 			m_nHund = CollisionOldMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 			g_nowHand = CollisionNowMap(XMFLOAT2(m_pos.x - 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		}
@@ -287,6 +289,7 @@ bool Player_Boy::CheckField()
 	Box* pBox = GetBox();
 	OBJECT_INFO* pOldMap = GetMap(1);
 
+	XMFLOAT3 boxPos;
 	for (int i = 0; i < MAP_HEIGHT * MAP_WIDTH; i++, pOldMap++) {
 		switch (pOldMap->m_nCategory) {
 		case 0:
@@ -296,7 +299,27 @@ bool Player_Boy::CheckField()
 			{
 				break;
 			}
-			XMFLOAT3 boxPos = pBox->GetPos(pOldMap->m_nObject);
+			boxPos = pBox->GetPos(pOldMap->m_nObject);
+			if (m_pos.x <= boxPos.x - 8.0f) continue;
+			if (boxPos.x + 8.0f <= m_pos.x) continue;
+
+			if (m_pos.y >= boxPos.y + 18.0f && g_oldBoyPos.y <= boxPos.y + 18.0f)
+			{
+				m_pos.y = boxPos.y + 18.0f;
+				return true;
+			}
+			else if (m_pos.y <= boxPos.y - 5.0f && g_oldBoyPos.y >= boxPos.y - 5.0f)
+			{
+				m_pos.y = boxPos.y - 5.0f;
+				m_move.y = 0.0f;
+			}
+			break;
+		case CARRY:
+			if (!pBox->GetState(pOldMap->m_nObject))
+			{
+				break;
+			}
+			boxPos = pBox->GetPos(pOldMap->m_nObject);
 			if (m_pos.x <= boxPos.x - 8.0f) continue;
 			if (boxPos.x + 8.0f <= m_pos.x) continue;
 

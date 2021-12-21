@@ -14,7 +14,15 @@ typedef struct {
 }OBJECT_INFO;
 
 //*****列挙型*****
-enum MAP_OBJECT { NONE, NORMAL, MOVE, };		// オブジェクトの種類
+// オブジェクトの種類
+enum MAP_OBJECT 
+{
+	NONE,		// なにもなし
+	NORMAL,		// 箱
+	BREAK,		// 壊せる箱
+	CARRY,		// 運べる箱
+	PUSH,		// 押せる箱
+};		
 
 //*****マクロ定義*****
 #define MAP_WIDTH	19
