@@ -11,6 +11,7 @@
 //#include "box.h"
 #include "map.h"
 #include "gimmick.h"
+#include "pause.h"
 
 //*****’è”’è‹`*****
 #define OLD_SCROLL_SPEED	(0.3f)
@@ -30,6 +31,8 @@ D3D11_VIEWPORT viewPorts[2];   //•ªŠ„ƒrƒ…[ƒ|[ƒgA‚±‚ê‚ðƒ‚ƒfƒ‹‚Ì•`‰æ‘O‚ÉÝ’è‚·‚
 D3D11_VIEWPORT viewPortsReset;   //•ªŠ„ƒrƒ…[ƒ|[ƒgA‚±‚ê‚ðƒ‚ƒfƒ‹‚Ì•`‰æ‘O‚ÉÝ’è‚·‚é
 
 float g_fBoyOldPosX;	// ’j‚ÌŽq‚Ì‰ß‹ŽÀ•W
+
+bool PauseFlg = false;
 
 //=============================
 //		‰Šú‰»
@@ -73,6 +76,8 @@ HRESULT InitSceneGame() {
 	//ƒ}ƒbƒv‰Šú‰»
 	InitMap();
 
+	InitPause();
+
 	CSound::Init();
 	CSound::Play(BGM_000);
 	return hr;
@@ -92,6 +97,8 @@ void UninitSceneGame() {
 	//ƒ}ƒbƒvI—¹
 	UninitMap();
 
+	UninitPause();
+
 	CSound::Stop(BGM_000);
 	CSound::Fin();
 	
@@ -101,33 +108,39 @@ void UninitSceneGame() {
 //		XV
 //=============================
 void UpdateSceneGame() {
-	//‰ß‹ŽXV
-	g_pOld->Update();
 
-	//Œ»ÝXV
-	g_pNow->Update();
+	PauseFlg = UpdatePause();
 
-	//” XV
-	//g_pBox->Update();
-	//ƒ}ƒbƒvXV
-	UpdateMap();
-
-	// ‰æ–Ê‚ðƒXƒNƒ[ƒ‹
-	viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
-	if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+	if (!PauseFlg)
 	{
-		viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
-		g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+		//‰ß‹ŽXV
+		g_pOld->Update();
+
+		//Œ»ÝXV
+		g_pNow->Update();
+
+		//” XV
+		//g_pBox->Update();
+		//ƒ}ƒbƒvXV
+		UpdateMap();
+
+		// ‰æ–Ê‚ðƒXƒNƒ[ƒ‹
+		viewPorts[0].TopLeftX -= OLD_SCROLL_SPEED;
+		if (g_fBoyOldPosX != g_pOld->GetBoyPos().x)
+		{
+			viewPorts[1].TopLeftX -= g_pOld->GetPlayerBoy()->GetBoyMove().x * NOW_SCROLL_SPEED;
+			g_fBoyOldPosX = g_pOld->GetBoyPos().x;
+		}
+
+		//ƒMƒ~ƒbƒNXV
+		g_pGimmick->Update(g_pOld->GetBoyPos());
+
+		if (GetKeyPress(VK_F1)) {
+			StartFadeOut(SCENE_TITLE);
+		}
+
+
 	}
-
-	//ƒMƒ~ƒbƒNXV
-	g_pGimmick->Update(g_pOld->GetBoyPos());
-
-	if (GetKeyPress(VK_F1)) {
-		StartFadeOut(SCENE_TITLE);
-	}
-
-
 
 	CSound::Update();
 }
@@ -152,9 +165,12 @@ void DrawSceneGame() {
 
 
 		//g_pBox->Draw();
+		
 
 	//ƒrƒ…[ƒ|[ƒg‚ÌÝ’è‚ðŒ³‚É–ß‚·
 	d3dDeviceContext->RSSetViewports(1, &viewPortsReset);
+
+	DrawPause();
 }
 
 //=============================

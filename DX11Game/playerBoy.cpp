@@ -149,7 +149,7 @@ void Player_Boy::Update() {
 		m_pos = oldPos;
 	}
 	//UŒ‚‚Ì“–‚½‚è”»’è
-	if (GetKeyPress(VK_SPACE))
+	if (GetKeyPress(VK_SPACE)||GetKeyPress(JOYSTICKID1))
 	{
 		/*‰¼*/int num = CollisionOldMap(XMFLOAT2(m_pos.x + 4.0f, m_pos.y), XMFLOAT2(PLAYER_BOY_COLLISION_SIZE_X, PLAYER_BOY_COLLISION_SIZE_Y)).m_nObject;
 		GetBox()->Destroy(num);
