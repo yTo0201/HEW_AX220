@@ -11,6 +11,7 @@
 //#include "box.h"
 #include "map.h"
 #include "gimmick.h"
+#include "Sound.h"
 
 //*****定数定義*****
 #define OLD_SCROLL_SPEED	(4.0f)
@@ -75,7 +76,7 @@ HRESULT InitSceneGame() {
 	InitMap();
 
 	CSound::Init();
-	CSound::Play(BGM_000);
+	CSound::Play(BGM_001);
 	return hr;
 }
 
@@ -93,7 +94,7 @@ void UninitSceneGame() {
 	//マップ終了
 	UninitMap();
 
-	CSound::Stop(BGM_000);
+	CSound::Stop(BGM_001);
 	CSound::Fin();
 	
 }
