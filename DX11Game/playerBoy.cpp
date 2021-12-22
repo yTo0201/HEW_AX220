@@ -220,7 +220,6 @@ void Player_Boy::Update() {
 	{
 		m_nHund = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
-		
 	}
 
 	// ‚¿•¨‚ğˆê‚ÉˆÚ“®
