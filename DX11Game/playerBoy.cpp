@@ -26,14 +26,16 @@ enum DIR { RIGHT, LEFT };
 
 #define PLAYER_BOY_COLLISION_SIZE_RAD	4.0f
 
-#define JUMP_POWER		(23.0f)
-#define GRAVITY_BOY		(2.0f)	// 重力
+#define JUMP_POWER		(12.0f)
+#define JUMP_WHILE		(15)
+#define GRAVITY_BOY		(1.0f)	// 重力
 #define RESIST_X		(0.7f)
 
 //*****グローバル変数*****
 XMFLOAT3 g_oldBoyPos;
 static int g_nowHand;
 static int timeJudge; // 0:過去,1:未来
+static int g_nJumpCnt;
 
 //==============================================================
 //ｺﾝｽﾄﾗｸﾀ
@@ -55,6 +57,7 @@ Player_Boy::Player_Boy()
 	m_nHund = 9999;
 	g_nowHand = 9999;
 	timeJudge = 0;
+	g_nJumpCnt = 0;
 
 	// モデルデータの読み込み
 	if (!m_model.Load(pDevice, pDeviceContext, PLAYER_BOY_MODEL_PATH)) {
@@ -77,6 +80,8 @@ Player_Boy::~Player_Boy() {
 //==============================================================
 void Player_Boy::Update() {
 	g_oldBoyPos = m_pos;
+	g_nJumpCnt--;
+
 	// カメラの向き取得
 	XMFLOAT3 rotCamera = CCamera::Get()->GetAngle();
 	XMFLOAT3 oldPos = m_pos;
@@ -99,10 +104,11 @@ void Player_Boy::Update() {
 	if (GetKeyTrigger(VK_UP))
 	{
 		// ジャンプ
-		if (!m_bJump)
+		if (g_nJumpCnt < 0)
 		{
 			m_move.y += JUMP_POWER;
 			m_bJump = true;
+			g_nJumpCnt = JUMP_WHILE;
 		}
 	}
 
@@ -183,7 +189,7 @@ void Player_Boy::Update() {
 	}
 	else
 	{
-		if (m_bLand)
+		if (!m_bLand)
 		{
 			m_bJump = true;
 			m_bLand = false;
@@ -293,16 +299,16 @@ bool Player_Boy::CheckField()
 		switch (pOldMap->m_nCategory) {
 		case 0:
 			break;
-		case NORMAL:
+		default:
 			if (!pBox->GetState(pOldMap->m_nObject))
 			{
 				break;
 			}
 			boxPos = pBox->GetPos(pOldMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 8.0f) continue;
-			if (boxPos.x + 8.0f <= m_pos.x) continue;
+			if (m_pos.x <= boxPos.x - 6.0f) continue;
+			if (boxPos.x + 6.0f <= m_pos.x) continue;
 
-			if (m_pos.y >= boxPos.y + 18.0f && g_oldBoyPos.y <= boxPos.y + 18.0f)
+			if (m_pos.y >= boxPos.y + 6.0f && g_oldBoyPos.y <= boxPos.y + 6.0f)
 			{
 				m_pos.y = boxPos.y + 18.0f;
 				return true;
@@ -311,26 +317,7 @@ bool Player_Boy::CheckField()
 			{
 				m_pos.y = boxPos.y - 5.0f;
 				m_move.y = 0.0f;
-			}
-			break;
-		case CARRY:
-			if (!pBox->GetState(pOldMap->m_nObject))
-			{
-				break;
-			}
-			boxPos = pBox->GetPos(pOldMap->m_nObject);
-			if (m_pos.x <= boxPos.x - 8.0f) continue;
-			if (boxPos.x + 8.0f <= m_pos.x) continue;
-
-			if (m_pos.y >= boxPos.y + 18.0f && g_oldBoyPos.y <= boxPos.y + 18.0f)
-			{
-				m_pos.y = boxPos.y + 18.0f;
-				return true;
-			}
-			else if (m_pos.y <= boxPos.y - 5.0f && g_oldBoyPos.y >= boxPos.y - 5.0f)
-			{
-				m_pos.y = boxPos.y - 5.0f;
-				m_move.y = 0.0f;
+				return false;
 			}
 			break;
 		}
