@@ -9,7 +9,7 @@
 #include "Texture.h"
 #include "mesh.h"
 #include "Light.h"
-#include "explosion.h"
+#include "dashEF_R.h"
 #include "bsphere.h"
 #include "enemy.h"
 #include "smoke.h"

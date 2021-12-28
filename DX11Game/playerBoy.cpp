@@ -7,7 +7,8 @@
 #include "input.h"
 #include "map.h"
 #include "bsphere.h"
-
+#include "dashEF_R.h"
+#include "dashEF_L.h"
 
 //*****—ñ‹“Œ^*****
 enum DIR { RIGHT, LEFT };
@@ -91,6 +92,12 @@ void Player_Boy::Update() {
 			m_move.x -= SinDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y + 90.0f) * PLAYER_BOY_VALUE_MOVE;
 
+			if (GetKeyTrigger(VK_LEFT))
+			{
+				StartDashEF(XMFLOAT3(m_pos.x+10, m_pos.y-5, m_pos.z), XMFLOAT2(100.0f, 100.0f));
+
+			}
+
 			m_rotDest.y = rotCamera.y + 90.0f;
 
 	}else if (GetKeyPress(VK_RIGHT)) {
@@ -98,6 +105,11 @@ void Player_Boy::Update() {
 			// ‰EˆÚ“®
 			m_move.x -= SinDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
 			m_move.z -= CosDeg(rotCamera.y - 90.0f) * PLAYER_BOY_VALUE_MOVE;
+			if (GetKeyTrigger(VK_RIGHT))
+			{
+				StartExplosion(XMFLOAT3(m_pos.x-5, m_pos.y-5, m_pos.z), XMFLOAT2(100.0f, 100.0f));
+
+			}
 
 			m_rotDest.y = rotCamera.y - 90.0f;
 	}
@@ -226,6 +238,7 @@ void Player_Boy::Update() {
 	{
 		m_nHund = 9999;
 		GetBox()->SetOldBoxPos(g_nowHand);
+		g_nowHand = 9999;
 	}
 
 	// ‚¿•¨‚ğˆê‚ÉˆÚ“®

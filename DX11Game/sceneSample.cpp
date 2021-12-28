@@ -12,7 +12,7 @@
 #include "enemy.h"
 #include "tree.h"
 #include "bullet.h"
-#include "explosion.h"
+#include "dashEF_R.h"
 #include "bsphere.h"
 #include "fire.h"
 #include "smoke.h"
@@ -20,7 +20,7 @@
 #include "object_3D.h"
 #include "cube.h"
 #include "Sound.h"
-
+#include "dashEF_L.h"
 
 //*****グローバル変数*****
 static BG* g_pBG;		//背景
@@ -84,10 +84,17 @@ HRESULT InitSceneSample() {
 	}
 
 	//爆発処理初期化
-	/*hr = InitExplosion();
+	hr = InitExplosion();
 	if (FAILED(hr)) {
 		return hr;
-	}*/
+	}
+
+	//エフェクト初期化
+	hr = InitDashEF();
+	if (FAILED(hr)) {
+		return hr;
+	}
+
 
 	//炎エフェクト初期化
 	hr = InitFire();
@@ -120,8 +127,11 @@ void UninitSceneSample() {
 	//炎エフェクト終了処理
 	UninitFire();
 
+	//エフェクト終了処理
+	UninitDashEF();
+
 	//爆発処理終了処理
-	//UninitExplosion();
+	UninitExplosion();
 
 	//ビルボード弾終了処理
 	UninitBullet();
@@ -185,7 +195,10 @@ void UpdateSceneSample() {
 	UpdateBSphere();
 
 	//爆発処理更新
-	//UpdateExplosion();
+	UpdateExplosion();
+
+	//エフェクト更新
+	UpdateDashEF();
 
 	//炎エフェクト更新
 	UpdateFire();
@@ -239,7 +252,10 @@ void DrawSceneSample() {
 	DrawBSphere();
 
 	//爆発処理描画
-	//DrawExplosion();
+	DrawExplosion();
+
+	//エフェクト描画
+	DrawDashEF();
 
 	//炎エフェクト描画
 	DrawFire();
